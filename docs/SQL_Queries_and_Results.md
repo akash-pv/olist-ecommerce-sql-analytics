@@ -291,9 +291,11 @@ FROM (
 
 **Verified result from the complete supplied CSV extracts:** 282 seller groups. This result uses the same seller_id + seller_city grouping as the query above.
 
-**Execution screenshot:** Not included. Capture a fresh MySQL Workbench result after rerunning the query on the reconciled database.
+**MySQL Workbench execution result**
 
-> The earlier report showed 34 sellers, which did not match the complete source data. The exact cause of that earlier difference has not been established. It may reflect a different import state or query execution state, so the earlier result image has been removed rather than presented as current evidence.
+![Q09 – Sellers with delivered item revenue above R$10,000](../screenshots/query_results/Q09_sellers_over_10000.png)
+
+> The screenshot above is the genuine Workbench output uploaded for Q09. The full source CSV calculation using the exact same grouping (seller_id, seller_city), delivered-order filter and R$10,000 threshold returns 282 seller groups. Run the count-validation query in Workbench to confirm the total in your local database; the screenshot shows the visible result rows, not a separate count summary.
 
 ## Q10 – Average order value by customer city
 
