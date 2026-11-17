@@ -4,20 +4,20 @@
 
 This project analyses the Brazilian E-Commerce Public Dataset by Olist using MySQL 8.0.
 
-The objective is to explore e-commerce sales performance, customer purchasing behaviour, product category performance, seller revenue, payment patterns, customer reviews, and delivery performance.
+The objective is to evaluate e-commerce sales performance, customer purchasing behaviour, product category performance, seller revenue, payment patterns, customer reviews, and delivery operations.
 
-The analysis uses SQL queries to identify business trends, investigate operational issues, and generate insights that can support data-driven business decisions.
+The project uses SQL to investigate business questions, identify trends, and develop recommendations that support data-driven decisions.
 
 ## Business Objectives
 
-- Analyse overall sales revenue and freight performance.
+- Analyse sales revenue and freight performance.
 - Identify top-performing product categories and products.
 - Understand customer spending and repeat purchasing behaviour.
 - Evaluate seller revenue performance.
 - Compare average order value across customer cities.
 - Analyse payment methods and payment values.
 - Monitor monthly revenue trends.
-- Identify customer review and delivery performance issues.
+- Investigate customer satisfaction and delivery performance.
 
 ## Dataset
 
@@ -25,9 +25,22 @@ The analysis uses SQL queries to identify business trends, investigate operation
 
 **Source:** [Kaggle – Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 
+**Dataset period:** 2016–2018 (data ends on 17 October 2018).
+
 The dataset contains information about customers, orders, order items, payments, products, sellers, reviews, and product categories.
 
-**Dataset period:** 2016–2018 (data ends on 17 October 2018).
+### Database Tables
+
+| Table | Records |
+|---|---:|
+| customers | 99,441 |
+| orders | 99,441 |
+| order_items | 112,650 |
+| payments | 103,886 |
+| products | 32,951 |
+| sellers | 3,095 |
+| reviews | 99,224 |
+| category_translation | 71 |
 
 ## Tools & Technologies
 
@@ -36,22 +49,9 @@ The dataset contains information about customers, orders, order items, payments,
 - SQL
 - GitHub
 
-## Database Tables
+## SQL Analysis
 
-| Table | Description |
-|---|---|
-| customers | Customer information and location |
-| orders | Order details and order status |
-| order_items | Products purchased in each order |
-| payments | Payment methods and payment values |
-| products | Product information |
-| sellers | Seller information and location |
-| reviews | Customer review scores |
-| category_translation | Portuguese-to-English category names |
-
-## Analysis & SQL Concepts
-
-The project contains 21 business questions organised into four levels.
+The project contains 21 business questions organised into four sections.
 
 ### 1. Beginner Analysis (Q01–Q05)
 
@@ -68,7 +68,7 @@ SQL concepts: SELECT, WHERE, ORDER BY, LIMIT, aggregate functions.
 SQL concepts: JOIN, GROUP BY, HAVING, aggregate functions, subqueries.
 
 - Q06: Calculate total revenue and freight from delivered orders.
-- Q07: Identify the product categories with the highest units sold.
+- Q07: Identify product categories with the highest units sold.
 - Q08: Find the top five customers by total spending.
 - Q09: Identify sellers generating more than R$10,000 in revenue.
 - Q10: Calculate average order value by customer city.
@@ -92,42 +92,87 @@ SQL concepts: CTEs, window functions, subqueries, views, stored procedures.
 - Q20: Identify product categories with the lowest customer review scores.
 - Q21: Calculate late delivery percentage and average delivery days.
 
-## Business Metrics
+## Key Business Findings
 
-The analysis focuses on the following metrics:
+The following findings were calculated from the uploaded Olist dataset.
 
-| Metric | Purpose |
-|---|---|
-| Total Revenue | Measure delivered item sales |
-| Total Freight | Understand shipping charges |
-| Units Sold | Measure product category demand |
-| Average Order Value | Evaluate order spending |
-| Repeat Customers | Understand customer retention |
-| Monthly Revenue Growth | Monitor sales trends |
-| Average Review Score | Evaluate customer satisfaction |
-| Late Delivery Percentage | Monitor delivery performance |
+### Sales Performance
 
-## Key Findings
+| Metric | Result |
+|---|---:|
+| Delivered item revenue | R$13,221,498.11 |
+| Freight value | R$2,198,275.64 |
+| Payments received on delivered orders | R$15,422,461.77 |
 
-*To be updated after executing and validating the SQL queries.*
+Payment totals are not assumed to equal item revenue plus freight exactly.
 
-- Total delivered revenue: [Add result]
-- Top-performing product category: [Add result]
-- Highest-revenue seller: [Add result]
-- Average order value: [Add result]
-- Repeat customer findings: [Add result]
-- Month-over-month revenue trend: [Add result]
-- Late delivery percentage: [Add result]
+### Product Performance
+
+- Bed, Bath & Table was the highest-selling category by units, with **10,953 units sold**.
+- Health & Beauty generated the highest item revenue, approximately **R$1.23 million**.
+- Watches & Gifts generated approximately **R$1.17 million** in item revenue.
+
+### Customer Analysis
+
+- The five highest-spending customers were identified using `customer_unique_id`.
+- **252 customers** placed more than two orders.
+- The average delivered item spend per customer was approximately **R$141.62**.
+
+### Geographic Sales Performance
+
+- São Paulo generated the highest delivered item sales, approximately **R$1.86 million**.
+- Rio de Janeiro ranked second, generating approximately **R$955,573.97**.
+
+### Seller Performance
+
+- **282 sellers** generated more than R$10,000 in delivered item revenue.
+- The highest-revenue seller generated approximately **R$226,987.93**.
+
+### Customer Satisfaction
+
+- Office Furniture had the lowest average review score among categories with at least 100 reviews, at approximately **3.65 out of 5**.
+
+### Delivery Performance
+
+| Metric | Result |
+|---|---:|
+| Delivered orders with both delivery dates available | 96,470 |
+| Late deliveries | 7,826 |
+| Late delivery rate | 8.1% |
+| Average delivery time | 12.1 days |
+
+### Operational Finding
+
+A total of **775 orders** had no matching order items:
+
+- Unavailable: 603
+- Canceled: 164
+- Created: 5
+- Invoiced: 2
+- Shipped: 1
+
+This demonstrates why order status and order-item records should be considered when analysing sales.
 
 ## Business Recommendations
 
-Recommendations will be finalised based on the actual query results. Areas to investigate include:
+Based on the findings:
 
-1. **Sales optimisation:** Prioritise high-performing categories and products.
-2. **Customer retention:** Develop targeted loyalty campaigns for repeat and high-value customers.
-3. **Seller performance:** Identify high-performing sellers and investigate opportunities to improve weaker seller performance.
-4. **Delivery improvement:** Investigate late deliveries and identify opportunities to improve logistics.
-5. **Customer satisfaction:** Review categories with lower customer ratings and investigate potential product or service issues.
+1. **Sales optimisation:** Prioritise inventory and promotional planning for high-volume categories such as Bed, Bath & Table.
+2. **Revenue growth:** Investigate the strong revenue contribution from Health & Beauty and Watches & Gifts.
+3. **Customer retention:** Develop loyalty campaigns for repeat and high-value customers.
+4. **Seller management:** Study the performance of high-revenue sellers to identify practices that can be shared with other sellers.
+5. **Customer satisfaction:** Investigate the causes of lower Office Furniture review scores and identify opportunities to improve product and service quality.
+6. **Delivery improvement:** Investigate late deliveries and identify opportunities to improve logistics and estimated delivery accuracy.
+7. **Order monitoring:** Monitor canceled and unavailable orders separately from completed sales.
+
+## Important Analysis Assumptions
+
+- Revenue is calculated using item price from delivered orders.
+- Freight value is reported separately from item revenue.
+- Customer identity is analysed using `customer_unique_id`, because `customer_id` is associated with individual orders.
+- The dataset does not provide a customer signup date. First recorded order date is used as a proxy where required.
+- Delivery performance excludes delivered orders with missing actual or estimated delivery dates.
+- The dataset is historical and ends on 17 October 2018. Results should not be interpreted as current market performance.
 
 ## Repository Structure
 
@@ -146,14 +191,6 @@ olist-ecommerce-sql-analytics/
 └── dataset_source.md
 ```
 
-## Important Analysis Assumptions
-
-- Revenue is calculated using item price from delivered orders.
-- Freight value is reported separately from item revenue.
-- Customer identity is analysed using `customer_unique_id`, because `customer_id` is associated with individual orders.
-- The dataset does not provide a customer signup date. First recorded order date is used as a proxy where required.
-- The dataset is historical and ends on 17 October 2018. Results should not be interpreted as current market performance.
-
 ## Author
 
 **Akash PV**
@@ -162,4 +199,3 @@ GitHub: [akash-pv](https://github.com/akash-pv)
 
 ---
 
-*This project demonstrates practical SQL skills, relational data analysis, business problem-solving, and data-driven decision-making using a real-world e-commerce dataset.*
