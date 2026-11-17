@@ -245,6 +245,10 @@ This demonstrates why order status and order-item records should be considered w
 
 The MySQL database was connected to Power BI to prepare and validate the relational data model.
 
+### Detailed Project Report
+
+The complete project documentation, including the analysis and supporting details, is available in the [Olist E-Commerce Final Report](docs/Olist_Ecommerce_Final_Report.docx).
+
 ![Power BI Data Model](screenshots/powerbi_datamodeling.png)
 
 This provides a foundation for further dashboard development.
@@ -293,6 +297,7 @@ olist-ecommerce-sql-analytics/
 │   └── ER Diagram.png
 │
 ├── docs/
+│   └── Olist_Ecommerce_Final_Report.docx
 │
 ├── README.md
 └── dataset_source.md
