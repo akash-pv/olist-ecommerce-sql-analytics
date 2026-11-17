@@ -182,7 +182,7 @@ SQL concepts: CTEs, window functions, subqueries, views, stored procedures.
 
 ### SQL Query Results & Execution Evidence
 
-View the [SQL Query Results Gallery](screenshots/query_results/README.md) to see the MySQL Workbench result screenshots for the 21 business questions. The gallery is organised by question number and links back to the SQL scripts in the `queries/` folder.
+View [SQL Queries & Results](docs/SQL_Queries_and_Results.md) to read each business question, inspect its SQL query and see the corresponding result screenshot. The [screenshot-only gallery](screenshots/query_results/README.md) is also available.
 
 ## 8. Key Business Findings
 

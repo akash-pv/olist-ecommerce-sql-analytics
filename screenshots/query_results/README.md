@@ -16,7 +16,6 @@ Use the corresponding `.sql` files in the repository `queries/` folder to inspec
 | Q06 | Payments associated with delivered orders | `Q06_payments_delivered_orders.png` |
 | Q07 | Top product categories by units sold | `Q07_top_product_categories.png` |
 | Q08 | Top five customers by delivered item spend | `Q08_top_5_customers_by_spend.png` |
-| Q09 | Count validation: 282 sellers with more than R$10,000 delivered item revenue | `Q09_seller_count_validation_summary.png` |
 | Q10 | Average order value by customer city | `Q10_average_order_value_by_city.png` |
 | Q11 | Orders handled and average payment by payment type | `Q11_payment_type_analysis.png` |
 | Q12 | Top three products by revenue within each category | `Q12_top_products_by_category.png` |
@@ -75,7 +74,9 @@ Use the corresponding `.sql` files in the repository `queries/` folder to inspec
 
 ![Q08 – Top five customers by delivered item spend](Q08_top_5_customers_by_spend.png)
 
+## Q09 – Seller revenue query
 
+The Q09 SQL is available in `queries/02_intermediate_queries.sql`. Its execution screenshot is intentionally omitted until a matching, genuine MySQL Workbench result is available.
 
 ## Q10 – Average order value by customer city
 
@@ -133,5 +134,6 @@ Use the corresponding `.sql` files in the repository `queries/` folder to inspec
 
 - Q04 includes both a delivered-order sample and the total delivered-order count.
 - Q06 includes revenue/freight and payment-total screenshots.
+- Q09 has no screenshot pending a fresh, verified MySQL Workbench capture.
 - Q14 includes the repeat-customer result (>2 orders) and a separate validation of the >20-order threshold.
-- The report contains 24 embedded result images for Q01–Q21. The repeated questions above have more than one screenshot.
+- The original report contains captured results for the listed questions. Q09 is intentionally excluded from the image sequence until its seller count is freshly verified.
