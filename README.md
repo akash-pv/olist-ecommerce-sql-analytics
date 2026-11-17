@@ -41,7 +41,7 @@ The dataset contains information about customers, orders, order items, payments,
 | sellers | 3,095 |
 | reviews | 99,224 |
 | category_translation | 71 |
-| **Total** | **640,623** |
+| **Total** | **550,759** |
 
 ## 4. Tools & Technologies
 
@@ -118,7 +118,7 @@ The validation identified:
 | `portateis_cozinha_e_preparadores_de_alimentos` without translation | 10 |
 | **Total affected product records** | **623** |
 
-Two non-empty category values were missing from the translation table, while 610 product records contained empty category values.
+Two non-empty category values were missing from the translation table, affecting 13 products. In addition, 610 products contained empty category values. The validation query returned three unmatched values when the empty string was counted alongside the two named categories.
 
 These records were identified during validation and were not automatically modified or deleted.
 
