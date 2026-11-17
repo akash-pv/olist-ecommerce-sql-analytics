@@ -1,8 +1,6 @@
 # Olist SQL Query Result Screenshots
 
-Execution-result screenshots extracted from `Olist_Ecommerce_Final_Report.docx`.
-
-Use the corresponding `.sql` files in the repository `queries/` folder to inspect the SQL code. These images show the captured MySQL Workbench outputs from the report; they are not newly re-executed screenshots.
+Execution-result screenshots for the SQL analysis. Most images were extracted from the original project report; Q09 is a separate MySQL Workbench screenshot uploaded after the Q09 result was rechecked. Use the corresponding `.sql` files in the repository `queries/` folder to inspect the SQL code.
 
 | Question | Result description | Screenshot file |
 |---|---|---|
@@ -16,6 +14,7 @@ Use the corresponding `.sql` files in the repository `queries/` folder to inspec
 | Q06 | Payments associated with delivered orders | `Q06_payments_delivered_orders.png` |
 | Q07 | Top product categories by units sold | `Q07_top_product_categories.png` |
 | Q08 | Top five customers by delivered item spend | `Q08_top_5_customers_by_spend.png` |
+| Q09 | Sellers with delivered item revenue above R$10,000 | `Q09_sellers_over_10000.png` |
 | Q10 | Average order value by customer city | `Q10_average_order_value_by_city.png` |
 | Q11 | Orders handled and average payment by payment type | `Q11_payment_type_analysis.png` |
 | Q12 | Top three products by revenue within each category | `Q12_top_products_by_category.png` |
@@ -74,9 +73,11 @@ Use the corresponding `.sql` files in the repository `queries/` folder to inspec
 
 ![Q08 – Top five customers by delivered item spend](Q08_top_5_customers_by_spend.png)
 
-## Q09 – Seller revenue query
+## Q09 – Sellers with delivered item revenue above R$10,000
 
-The Q09 SQL and count-validation query are available in `queries/02_intermediate_queries.sql`. The earlier 34-row image was removed because it did not match the full-source calculation. A fresh MySQL Workbench screenshot should be added after rerunning the query on the reconciled database.
+![Q09 – Sellers with delivered item revenue above R$10,000](Q09_sellers_over_10000.png)
+
+The exact Q09 query and its count-validation query are available in `queries/02_intermediate_queries.sql`. The full source CSV calculation returns 282 seller groups when grouped by `seller_id` and `seller_city`, filtered to delivered orders and a seller revenue threshold above R$10,000. Use the count-validation query to verify the total against your local MySQL database.
 
 ## Q10 – Average order value by customer city
 
@@ -134,6 +135,6 @@ The Q09 SQL and count-validation query are available in `queries/02_intermediate
 
 - Q04 includes both a delivered-order sample and the total delivered-order count.
 - Q06 includes revenue/freight and payment-total screenshots.
-- Q09 has no screenshot. The full source CSV extracts return 282 seller groups when using the exact query grouping (seller_id, seller_city).
+- Q09 has a newly uploaded MySQL Workbench screenshot. The full source CSV calculation returns 282 seller groups using the exact query grouping (seller_id, seller_city).
 - Q14 includes the repeat-customer result (>2 orders) and a separate validation of the >20-order threshold.
-- Q09 is intentionally excluded until a new result is captured from MySQL Workbench after the full import has been reconciled.
+- Q09 screenshot shows the visible seller result rows; use the count-validation query in `queries/02_intermediate_queries.sql` to verify the full result count.
