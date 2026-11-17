@@ -180,6 +180,10 @@ SQL concepts: CTEs, window functions, subqueries, views, stored procedures.
 - Q20: Identify product categories with the lowest customer review scores.
 - Q21: Calculate late delivery percentage and average delivery days.
 
+### SQL Query Results & Execution Evidence
+
+View the [SQL Query Results Gallery](screenshots/query_results/README.md) to see the MySQL Workbench result screenshots for the 21 business questions. The gallery is organised by question number and links back to the SQL scripts in the `queries/` folder.
+
 ## 8. Key Business Findings
 
 The following findings were calculated from the Olist dataset using SQL.
@@ -291,7 +295,10 @@ olist-ecommerce-sql-analytics/
 │   └── 06_data_quality_validation.sql
 │
 ├── screenshots/
-│   └── powerbi_datamodeling.png
+│   ├── powerbi_datamodeling.png
+│   └── query_results/
+│       ├── README.md
+│       └── Q01–Q21 execution screenshots
 │
 ├── er-diagram/
 │   └── ER Diagram.png
