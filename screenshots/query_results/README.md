@@ -75,11 +75,7 @@ Use the corresponding `.sql` files in the repository `queries/` folder to inspec
 
 ![Q08 – Top five customers by delivered item spend](Q08_top_5_customers_by_spend.png)
 
-## Q09 – Seller count validation
 
-The earlier report image showed 34 seller rows, which conflicted with the later count query. The count query returned 282, and the result was independently cross-checked against the original Olist CSV files. The image below is a prepared result summary, not a MySQL Workbench screenshot.
-
-![Q09 – Seller count validation summary](Q09_seller_count_validation_summary.png)
 
 ## Q10 – Average order value by customer city
 
