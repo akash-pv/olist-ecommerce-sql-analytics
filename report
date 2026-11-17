@@ -1,0 +1,495 @@
+DATA ANALYSIS
+PROJECT REPORT
+Brazilian E-Commerce (Olist)
+Sales, customer, product and delivery performance
+
+
+PROJECT	E-commerce SQL Analytics
+DATASET	Brazilian E-Commerce Public Dataset by Olist
+TOOLS	MySQL 8.0 / MySQL Workbench
+ANALYSIS PERIOD	2016–2018 (dataset ends 17 October 2018)
+
+
+Prepared by: Akash PV
+CONFIDENTIALITY
+Prepared as a professional portfolio case study using a public historical dataset.
+ 
+1. Executive Summary
+This project analyses the Olist Brazilian e-commerce dataset to understand sales performance, customer purchasing behaviour, product-category demand, seller contribution and delivery outcomes. The analysis was performed in MySQL 8.0 using joins, aggregations, subqueries, common table expressions, window functions, a view and a stored procedure.
+The results provide a historical view of the marketplace rather than a measure of current performance. The dataset ends on 17 October 2018. Revenue in this report follows a consistent rule: item price from delivered orders only; freight is shown separately.
+Selected findings
+Measure	Observed result	Interpretation
+Delivered orders	96,478	Base population reported by the delivered-order count query.
+Delivered item revenue	R$1,322,149.81	Sum of item prices for delivered orders (Q06).
+Freight value	R$219,827.65	Freight reported separately from item revenue (Q06).
+Payments on delivered orders	R$1,542,246.77	Payment total used as a reconciliation check (Q06).
+Late delivery rate	8.1%	7,826 late orders out of 96,470 delivered orders with delivery date (Q21).
+Average delivery time	12.5 days	Average calendar days from purchase to customer delivery (Q21).
+Orders without order items	775	Mostly unavailable (603) or canceled (164) orders (Q18).
+Data-quality note: the delivered-order count in Q04 is 96,478, while Q21 uses 96,470 rows with a non-null delivery date. The eight-row difference is consistent with Q21's additional date-completeness condition.
+2. Business Objective and Scope
+The objective is to convert transactional marketplace data into evidence that can support commercial and operational decisions. The analysis is organised around five business areas:
+•	Sales performance: delivered item revenue, freight, monthly trends and geographic contribution.
+•	Customer behaviour: customer spend, repeat purchasing and average order value by city.
+•	Product performance: category unit volume and product revenue rankings within categories.
+•	Seller and payment performance: seller revenue contribution and payment-type activity.
+•	Operational experience: orders without line items, review scores and delivery punctuality.
+3. Dataset and Data Model
+The project uses the Olist public relational dataset. The working database is named olist_ecommerce and contains the following tables:
+Table	Analytical role
+customers	Customer and customer-city attributes; customer_unique_id identifies a person across orders.
+orders	Order-level status and purchase/delivery timestamps.
+order_items	Product, seller, item price and freight at order-line level.
+payments	Payment method, payment value and instalment information.
+products	Product attributes and category identifiers.
+sellers	Seller identifiers and seller-city attributes.
+reviews	Customer review scores linked to orders.
+category_translation	Maps Portuguese category names to English labels.
+The dataset does not contain a customer registration date. For Q05, the first recorded order date is used as a proxy; it should not be described as the customer's signup date.
+4. Analytical Methodology
+•	Loaded and queried the relational dataset in MySQL 8.0.
+•	Joined orders to order_items for item-level sales analysis and filtered to delivered orders where revenue was required.
+•	Aggregated line items to order or customer level before calculating order/customer metrics, avoiding row multiplication where relevant.
+•	Used customer_unique_id for customer-level analysis because customer_id is order-specific in this dataset.
+•	Used window functions to rank products within categories and calculate month-over-month revenue movement.
+•	Created a monthly_sales_summary view for reusable monthly reporting and a get_customer_history stored procedure for customer-level order history.
+Metric definitions
+Metric	Definition used
+Item revenue	SUM(order_items.price) for delivered orders; excludes freight.
+Freight	SUM(order_items.freight_value) for delivered orders; reported separately.
+Average order value	Average delivered order item-price total; freight excluded.
+Units sold	Count of delivered order-item rows.
+Late delivery	Delivered customer date later than estimated delivery date.
+Average delivery time	DATEDIFF(customer delivery date, purchase timestamp), in calendar days.
+5. Key Findings
+5.1 Sales and payment reconciliation
+The delivered-order analysis reports R$1,322,149.81 in item revenue and R$219,827.65 in freight. Payments associated with delivered orders total R$1,542,246.77. The payment total is close to the combined item revenue and freight total, but differs by R$269.31. This should be treated as a small reconciliation difference to investigate rather than assumed to be an error.
+5.2 Product-category demand
+Rank	Category	Delivered units
+1	bed_bath_table	10,953
+2	health_beauty	9,465
+3	sports_leisure	8,431
+Bed and bath table products lead the unit-volume result, followed by health and beauty and sports and leisure. These are volume leaders, not necessarily the highest-margin categories; margin data is not available in this analysis.
+5.3 Customer purchasing behaviour
+The repeat-customer query identifies customers with more than two orders. The highest observed customer order count in the result is 17. The project uses customer_unique_id to avoid treating each order-specific customer_id as a separate person.
+5.4 Seller contribution
+The seller analysis identifies 34 sellers with delivered item revenue above R$10,000. The leading seller in the captured result generated R$226,987.93 in delivered item revenue. Seller revenue is not the same as seller profit because costs, commissions and returns are not included.
+5.5 Delivery performance
+The delivery query reports 7,826 late deliveries, representing 8.1% of 96,470 delivered orders with a recorded customer-delivery date. Average delivery time is 12.5 days. The late-delivery percentage is a useful operational KPI, but the analysis does not explain the causes of delay.
+5.6 Orders without order items
+Order status	Orders without items
+Unavailable	603
+Canceled	164
+Created	5
+Invoiced	2
+Shipped	1
+The 775 orders without matching order-item rows are predominantly unavailable or canceled. This explains why an inner join from orders to order_items excludes these records.
+5.7 Customer review scores
+Among categories with at least 100 reviews, office_furniture has the lowest average score at 3.65 (1,246 reviews), followed by fashion_male_clothing at 3.82 (105 reviews) and audio at 3.83 (346 reviews). The lower review scores identify categories for further investigation; they do not by themselves establish the cause of dissatisfaction.
+6. Recommendations
+1.	Prioritise category-level investigation: Review product quality, descriptions, packaging and delivery experience in office_furniture, which has the lowest average review score in the analysed categories.
+2.	Monitor delivery punctuality: Track late-delivery rate by seller, customer destination, carrier or region to isolate where the 8.1% late rate is concentrated.
+3.	Protect high-volume categories: Use demand planning for bed_bath_table, health_beauty and sports_leisure; validate stock availability and supplier capacity before promotions.
+4.	Develop repeat-customer activity: Segment customers by order frequency and spend, then test targeted retention campaigns. Measure repeat purchase rate and incremental revenue.
+5.	Review seller concentration: Monitor high-revenue sellers for service levels and dependency risk. Pair revenue reporting with delivery and review KPIs.
+6.	Reconcile payment totals: Investigate the R$269.31 difference between delivered-order payments and item revenue plus freight, checking refunds, adjustments and payment allocation.
+7. Limitations and Assumptions
+•	The dataset is historical and ends on 17 October 2018; findings should not be presented as current marketplace performance.
+•	Revenue is defined as delivered item price and excludes freight unless freight is explicitly reported as a separate measure.
+•	No product cost, seller cost, commission, marketing spend or margin fields were analysed; profitability cannot be inferred.
+•	No customer signup date is available; first purchase date is used only as a proxy in the cohort-style question.
+•	Some customer and category analyses use order-level relationships; one review may be associated with multiple categories when an order contains multiple product categories.
+•	Delivery-time averages use available timestamps and calendar-day differences; business days and carrier-level causes were not assessed.
+•	The payment reconciliation difference requires investigation before the figures are used for financial reporting.
+8. SQL Implementation Summary
+SQL capability	Applied in project
+Filtering and sorting	SELECT, WHERE, ORDER BY, LIMIT
+Joins and aggregation	INNER/LEFT JOIN, GROUP BY, HAVING, SUM, AVG, COUNT
+Subqueries and CTEs	Average customer spend and product revenue staging
+Window functions	RANK for top products per category; LAG for monthly revenue change
+View	monthly_sales_summary for monthly dashboard reporting
+Stored procedure	get_customer_history for a selected customer_unique_id
+9. Appendix: Query Catalogue
+The detailed SQL scripts and execution screenshots are maintained separately as the technical working file. The following catalogue records the purpose of each query.
+ID	Business question / analysis	SQL focus
+Q01	List customers from São Paulo	Filtering
+Q02	Orders in the final 30 days of the dataset	Date filtering
+Q03	10 most expensive products	Aggregation and sorting
+Q04	Delivered orders and delivered-order count	Filtering and count
+Q05	Customers whose first order was in 2017	MIN, GROUP BY, HAVING
+Q06	Delivered item revenue, freight and payment check	Joins and aggregation
+Q07	Top product categories by units sold	Joins and aggregation
+Q08	Top five customers by delivered spend	Customer aggregation
+Q09	Sellers generating more than R$10,000	Subquery and HAVING
+Q10	Average order value by customer city	Nested aggregation
+Q11	Orders handled and average payment by type	Payment aggregation
+Q12	Top three products by revenue in each category	CTE and RANK
+Q13	Customers spending above average	Subquery
+Q14	Customers with more than two orders	Repeat-customer analysis
+Q15	Monthly sales summary view	CREATE VIEW
+Q16	Order history for a selected customer	Stored procedure
+Q17	Cities with highest delivered item sales	Geographic aggregation
+Q18	Orders without matching order items	LEFT JOIN and NULL
+Q19	Month-over-month revenue growth	LAG window function
+Q20	Categories with lowest review scores	Review aggregation
+Q21	Late-delivery rate and average delivery time	Date calculations
+10. Project Deliverables
+•	SQL scripts organised by beginner, intermediate, advanced and business-analysis questions.
+•	README file describing the business problem, dataset, tools, setup and key findings.
+•	Selected MySQL Workbench screenshots for query outputs and database objects.
+•	Entity-relationship diagram showing the main tables and join keys.
+•	This report summarising methodology, findings, recommendations and limitations.
+
+Source basis: the uploaded Olist SQL working document and its embedded MySQL Workbench result screenshots. Numerical findings are transcribed from those captured outputs; they have not been independently re-executed against the database.
+ 
+Technical Appendix – SQL Queries and Execution Evidence
+This appendix contains the SQL used for the 21 analysis questions, followed by the corresponding MySQL Workbench result screenshots where included in the working document. The report body presents the business interpretation; this appendix provides the technical evidence and reproducibility detail.
+-- OLIST E-COMMERCE SQL ANALYTICS
+
+CREATE DATABASE olist_ecommerce;
+---------------------------------------------------------------------
+USE olist_ecommerce;
+=====================================================================
+PART A: BEGINNER (SELECT, WHERE, ORDER BY, LIMIT)
+=====================================================================
+Q01: List customers from a specific city (sao paulo)
+SELECT customer_unique_id, customer_city, customer_state
+FROM customers
+WHERE customer_city = 'sao paulo'
+LIMIT 20;
+ 
+Q02: Orders placed in the last 30 days of the dataset
+(counted back from 2018-10-17; expect only canceled orders)
+SELECT order_id, order_status, order_purchase_timestamp
+FROM orders
+WHERE order_purchase_timestamp >= DATE_SUB('2018-10-17', INTERVAL 30 DAY)
+ORDER BY order_purchase_timestamp DESC;
+ 
+Q03: The 10 most expensive products (highest price per product)
+SELECT product_id, MAX(price) AS highest_price
+FROM order_items
+GROUP BY product_id
+ORDER BY highest_price DESC
+LIMIT 10;
+ 
+Q04: All orders with status = 'delivered' (first 20 shown)
+SELECT order_id, customer_id, order_purchase_timestamp
+FROM orders
+WHERE order_status = 'delivered'
+LIMIT 20;
+ 
+Q04 check: total delivered orders
+SELECT COUNT(*) AS delivered_orders
+FROM orders
+WHERE order_status = 'delivered';
+ 
+Q05: Customers whose first order was in 2017
+(no signup date exists, so first order date stands in for it)
+SELECT c.customer_unique_id, MIN(o.order_purchase_timestamp) AS first_order
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_unique_id
+HAVING YEAR(MIN(o.order_purchase_timestamp)) = 2017
+LIMIT 20;
+ 
+=====================================================================
+PART B: INTERMEDIATE (JOINs, GROUP BY, HAVING, aggregates)
+=====================================================================
+Q06: What is the total revenue generated so far? (delivered orders)
+README screenshot: intermediate_q1_revenue.png
+SELECT SUM(oi.price) AS total_revenue,
+SUM(oi.freight_value) AS total_freight
+FROM orders o
+JOIN order_items oi ON o.order_id = oi.order_id
+WHERE o.order_status = 'delivered';
+ 
+Q06 check: payments received on delivered orders
+SELECT SUM(p.payment_value) AS total_paid
+FROM orders o
+JOIN payments p ON o.order_id = p.order_id
+WHERE o.order_status = 'delivered';
+ 
+Q07: Which product category has sold the most units? (delivered orders)
+README screenshot: intermediate_q2_top_categories.png
+SELECT COALESCE(t.product_category_name_english, NULLIF(p.product_category_name, ''), 'unknown') AS category,
+COUNT(*) AS units_sold
+FROM order_items oi
+JOIN orders o ON oi.order_id = o.order_id
+JOIN products p ON oi.product_id = p.product_id
+LEFT JOIN category_translation t ON p.product_category_name = t.product_category_name
+WHERE o.order_status = 'delivered'
+GROUP BY category
+ORDER BY units_sold DESC
+LIMIT 10;
+ 
+Q08: Top 5 customers by total amount spent (delivered orders)
+SELECT c.customer_unique_id,
+SUM(oi.price) AS total_spent
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+JOIN order_items oi ON o.order_id = oi.order_id
+WHERE o.order_status = 'delivered'
+GROUP BY c.customer_unique_id
+ORDER BY total_spent DESC
+LIMIT 5;
+ 
+Q09: Sellers generating more than R$10,000 in revenue
+SELECT
+s.seller_id,
+s.seller_city,
+r.total_revenue
+FROM sellers s
+JOIN (
+SELECT
+oi.seller_id,
+SUM(oi.price) AS total_revenue
+FROM order_items oi
+JOIN orders o
+ON oi.order_id = o.order_id
+WHERE o.order_status = 'delivered'
+GROUP BY oi.seller_id
+HAVING SUM(oi.price) > 10000
+) r
+ON s.seller_id = r.seller_id
+ORDER BY r.total_revenue DESC;
+ 
+Q10: Average order value per customer city (cities with 50+ orders)
+The inner query adds items up to one row per order first.
+SELECT city, ROUND(AVG(order_value), 2) AS avg_order_value, COUNT(*) AS orders
+FROM (
+SELECT c.customer_city AS city,
+o.order_id,
+SUM(oi.price) AS order_value
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+JOIN order_items oi ON o.order_id = oi.order_id
+WHERE o.order_status = 'delivered'
+GROUP BY c.customer_city, o.order_id
+) AS order_totals
+GROUP BY city
+HAVING COUNT(*) >= 50
+ORDER BY avg_order_value DESC
+LIMIT 10;
+ 
+Q11: Orders handled and average payment value per payment type
+Delivered orders only; aggregate instalments per order first.
+SELECT
+payment_type,
+COUNT(*) AS orders_handled,
+ROUND(AVG(order_payment), 2) AS avg_payment_value
+FROM (
+SELECT
+p.order_id,
+p.payment_type,
+SUM(p.payment_value) AS order_payment
+FROM payments p
+JOIN orders o
+ON p.order_id = o.order_id
+WHERE o.order_status = 'delivered'
+GROUP BY p.order_id, p.payment_type
+) AS payment_summary
+GROUP BY payment_type
+ORDER BY orders_handled DESC;
+ 
+=====================================================================
+PART C: ADVANCED (CTEs, window functions, subqueries, view, procedure)
+=====================================================================
+Q12: Rank products by revenue within each category (top 3 per category)
+README screenshot: advanced_q1_product_ranking.png
+Q12: Top 3 products by revenue in each category
+WITH product_revenue AS (
+SELECT
+COALESCE(
+t.product_category_name_english,
+NULLIF(p.product_category_name, ''),
+'unknown'
+) AS category,
+oi.product_id,
+SUM(oi.price) AS revenue
+FROM order_items oi
+JOIN orders o
+ON oi.order_id = o.order_id
+JOIN products p
+ON oi.product_id = p.product_id
+LEFT JOIN category_translation t
+ON p.product_category_name = t.product_category_name
+WHERE o.order_status = 'delivered'
+GROUP BY category, oi.product_id
+),
+ranked AS (
+SELECT
+category,
+product_id,
+revenue,
+RANK() OVER (
+PARTITION BY category
+ORDER BY revenue DESC
+) AS rnk
+FROM product_revenue
+)
+SELECT
+category,
+product_id,
+revenue,
+rnk
+FROM ranked
+WHERE rnk <= 3
+ORDER BY category, rnk, revenue DESC;
+ 
+Q13: Customers who spent more than the average customer spend (subquery)
+SELECT c.customer_unique_id,
+SUM(oi.price) AS total_spent
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+JOIN order_items oi ON o.order_id = oi.order_id
+WHERE o.order_status = 'delivered'
+GROUP BY c.customer_unique_id
+HAVING SUM(oi.price) > (
+SELECT AVG(customer_total)
+FROM (
+SELECT SUM(oi2.price) AS customer_total
+FROM customers c2
+JOIN orders o2 ON c2.customer_id = o2.customer_id
+JOIN order_items oi2 ON o2.order_id = oi2.order_id
+WHERE o2.order_status = 'delivered'
+GROUP BY c2.customer_unique_id
+) AS customer_totals
+)
+ORDER BY total_spent DESC
+LIMIT 20;
+ 
+Q14: Repeat customers: more than 2 orders
+(the guide's "more than 20" returns nobody in this dataset)
+SELECT c.customer_unique_id,
+COUNT(DISTINCT o.order_id) AS orders_placed
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_unique_id
+HAVING COUNT(DISTINCT o.order_id) > 2
+ORDER BY orders_placed DESC;
+ 
+Q14 proof: the guide's threshold of 20 gives an empty result
+SELECT c.customer_unique_id,
+COUNT(DISTINCT o.order_id) AS orders_placed
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_unique_id
+HAVING COUNT(DISTINCT o.order_id) > 20;
+ 
+Q15: View for a dashboard tool: monthly_sales_summary
+RUN AS BLOCK step 1: select ONLY the CREATE VIEW statement below and
+click the lightning bolt.
+CREATE OR REPLACE VIEW monthly_sales_summary AS
+SELECT DATE_FORMAT(o.order_purchase_timestamp, '%Y-%m') AS order_month,
+COUNT(DISTINCT o.order_id) AS orders,
+SUM(oi.price) AS revenue,
+SUM(oi.freight_value) AS freight,
+ROUND(SUM(oi.price) / COUNT(DISTINCT o.order_id), 2) AS avg_order_value
+FROM orders o
+JOIN order_items oi ON o.order_id = oi.order_id
+WHERE o.order_status = 'delivered'
+GROUP BY DATE_FORMAT(o.order_purchase_timestamp, '%Y-%m');
+Q15 step 2: read the view like a table
+README screenshot: monthly_sales_summary_view.png
+SELECT * FROM monthly_sales_summary ORDER BY order_month;
+ 
+Q16: Stored procedure: full order history for one customer
+RUN AS BLOCK step 1: select everything from DROP PROCEDURE down to the
+last "DELIMITER ;" line and click the lightning bolt.
+DROP PROCEDURE IF EXISTS get_customer_history;
+DELIMITER //
+CREATE PROCEDURE get_customer_history(
+IN p_customer_unique_id VARCHAR(50)
+)
+BEGIN
+SELECT
+o.order_id,
+o.order_status,
+o.order_purchase_timestamp,
+COUNT(oi.order_item_id) AS items,
+COALESCE(SUM(oi.price), 0) AS order_value
+FROM customers c
+JOIN orders o
+ON c.customer_id = o.customer_id
+LEFT JOIN order_items oi
+ON o.order_id = oi.order_id
+WHERE c.customer_unique_id = p_customer_unique_id
+GROUP BY
+o.order_id,
+o.order_status,
+o.order_purchase_timestamp
+ORDER BY o.order_purchase_timestamp;
+END //
+DELIMITER ;
+Q16 step 2: call it. Replace the text with a customer_unique_id from Q14.
+README screenshot: get_customer_history_call.png
+CALL get_customer_history(
+'8d50f5eadf50201ccdcedfb9e2ac8455'
+);
+ 
+=====================================================================
+PART D: EXTRA QUESTIONS (take the project past 20)
+=====================================================================
+Q17: Which customer cities generate the highest delivered item sales?
+SELECT
+c.customer_city,
+SUM(oi.price) AS total_price
+FROM customers c
+JOIN orders o
+ON c.customer_id = o.customer_id
+JOIN order_items oi
+ON o.order_id = oi.order_id
+WHERE o.order_status = 'delivered'
+GROUP BY c.customer_city
+ORDER BY total_price DESC
+LIMIT 10;
+ 
+Q18: Why do 775 orders disappear when joining orders to order_items?
+(they have no items: almost all are canceled or unavailable)
+SELECT o.order_status, COUNT(*) AS orders_without_items
+FROM orders o
+LEFT JOIN order_items oi ON o.order_id = oi.order_id
+WHERE oi.order_id IS NULL
+GROUP BY o.order_status;
+ 
+Q19: Is revenue growing? Month-over-month growth (window function LAG)
+Needs the view from Q15. Early 2016 months have very few orders.
+SELECT order_month,
+revenue,
+LAG(revenue) OVER (ORDER BY order_month) AS previous_month_revenue,
+ROUND((revenue - LAG(revenue) OVER (ORDER BY order_month))
+/ LAG(revenue) OVER (ORDER BY order_month) * 100, 1) AS growth_pct
+FROM monthly_sales_summary
+ORDER BY order_month;
+ 
+Q20: Which product categories have the lowest customer review scores?
+Review scores were analysed by product category. Only categories with at least 100 reviews were included, and each review was counted once within each category.
+per category so multi-item orders do not weigh more)
+SELECT category,
+ROUND(AVG(review_score), 2) AS avg_review_score,
+COUNT(*) AS reviews
+FROM (
+SELECT DISTINCT r.review_id,
+r.review_score,
+COALESCE(t.product_category_name_english, NULLIF(p.product_category_name, ''), 'unknown') AS category
+FROM orders o
+JOIN reviews r ON o.order_id = r.order_id
+JOIN order_items oi ON o.order_id = oi.order_id
+JOIN products p ON oi.product_id = p.product_id
+LEFT JOIN category_translation t ON p.product_category_name = t.product_category_name
+WHERE o.order_status = 'delivered'
+) AS category_reviews
+GROUP BY category
+HAVING COUNT(*) >= 100
+ORDER BY avg_review_score ASC
+LIMIT 10;
+ 
+Q21: How many delivered orders arrived later than the estimated date?
+SELECT COUNT(*) AS delivered_orders,
+SUM(order_delivered_customer_date > order_estimated_delivery_date) AS late_orders,
+ROUND(100 * SUM(order_delivered_customer_date > order_estimated_delivery_date) / COUNT(*), 1) AS late_pct,
+ROUND(AVG(DATEDIFF(order_delivered_customer_date, order_purchase_timestamp)), 1) AS avg_delivery_days
+FROM orders
+WHERE order_status = 'delivered'
+AND order_delivered_customer_date IS NOT NULL;
+ 
