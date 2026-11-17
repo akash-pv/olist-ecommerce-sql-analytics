@@ -59,6 +59,8 @@ During the initial data import using MySQL Table Data Import Wizard, discrepanci
 
 To address this, I switched to MySQL's `LOAD DATA LOCAL INFILE` method to load the CSV datasets directly into their respective tables.
 
+The final source-to-table row counts matched the supplied CSV extracts: customers 99,441; orders 99,441; order_items 112,650; payments 103,886; products 32,951; sellers 3,095; reviews 99,224; category_translation 71. This is **550,759 rows across eight tables**.
+
 The loading process included:
 
 - Creating tables with appropriate column data types.
@@ -121,6 +123,19 @@ The validation identified:
 Two non-empty category values were missing from the translation table, affecting 13 products. In addition, 610 products contained empty category values. The validation query returned three unmatched values when the empty string was counted alongside the two named categories.
 
 These records were identified during validation and were not automatically modified or deleted.
+
+### 5.6 Correct Validation and Constraint Execution Order
+
+For a clean rebuild, use this order:
+
+1. Create the eight tables without primary-key and foreign-key constraints.
+2. Load the CSV files using `LOAD DATA LOCAL INFILE`.
+3. Run `queries/05_data_quality_validation.sql` to reconcile row counts and check NULLs, duplicates, orphan records and category mapping.
+4. Investigate and document exceptions; do not automatically delete unmatched category records.
+5. Run `queries/06_database_constraints.sql` to apply primary keys, composite keys and foreign keys.
+6. Verify the resulting constraints using `INFORMATION_SCHEMA.KEY_COLUMN_USAGE`.
+
+**Execution-history note:** In the initial project run, constraints were added before some of the NULL, duplicate and orphan checks were executed. Those original zero-result checks therefore describe the constrained database state; they are not evidence of a pre-constraint validation step. The sequence above is the corrected workflow for a fresh rebuild.
 
 ## 6. Database Design & Constraints
 
@@ -196,7 +211,7 @@ The following findings were calculated from the Olist dataset using SQL.
 | Freight value | R$2,198,275.64 |
 | Payments received on delivered orders | R$15,422,461.77 |
 
-Payment totals are not assumed to equal item revenue plus freight exactly.
+Payments on delivered orders total R$15,422,461.77, which is R$2,688.02 higher than delivered item revenue plus freight combined. This small reconciliation difference is documented for investigation rather than assumed to be an error.
 
 ### 8.2 Product Performance
 
@@ -251,7 +266,7 @@ The MySQL database was connected to Power BI to prepare and validate the relatio
 
 ### Detailed Project Report
 
-The complete project documentation, including the analysis and supporting details, is available in the [Olist E-Commerce Final Report](docs/Olist_Ecommerce_Final_Report.docx).
+The earlier Word export contained outdated numerical values and has been superseded. Use this README and [SQL Queries & Results](docs/SQL_Queries_and_Results.md) for the current corrected analysis. A corrected Word report is available separately and should replace the archived DOCX before sharing it from GitHub.
 
 ![Power BI Data Model](screenshots/powerbi_datamodeling.png)
 
@@ -291,8 +306,8 @@ olist-ecommerce-sql-analytics/
 │   ├── 02_intermediate_queries.sql
 │   ├── 03_advanced_queries.sql
 │   ├── 04_business_analysis_queries.sql
-│   ├── 05_database_constraints.sql
-│   └── 06_data_quality_validation.sql
+│   ├── 05_data_quality_validation.sql
+│   └── 06_database_constraints.sql
 │
 ├── screenshots/
 │   ├── powerbi_datamodeling.png

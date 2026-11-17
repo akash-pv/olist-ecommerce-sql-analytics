@@ -76,7 +76,7 @@ Use the corresponding `.sql` files in the repository `queries/` folder to inspec
 
 ## Q09 – Seller revenue query
 
-The Q09 SQL is available in `queries/02_intermediate_queries.sql`. Its execution screenshot is intentionally omitted until a matching, genuine MySQL Workbench result is available.
+The Q09 SQL and count-validation query are available in `queries/02_intermediate_queries.sql`. The earlier 34-row image was removed because it did not match the full-source calculation. A fresh MySQL Workbench screenshot should be added after rerunning the query on the reconciled database.
 
 ## Q10 – Average order value by customer city
 
@@ -134,6 +134,6 @@ The Q09 SQL is available in `queries/02_intermediate_queries.sql`. Its execution
 
 - Q04 includes both a delivered-order sample and the total delivered-order count.
 - Q06 includes revenue/freight and payment-total screenshots.
-- Q09 has no screenshot pending a fresh, verified MySQL Workbench capture.
+- Q09 has no screenshot. The full source CSV extracts return 282 seller groups when using the exact query grouping (seller_id, seller_city).
 - Q14 includes the repeat-customer result (>2 orders) and a separate validation of the >20-order threshold.
-- The original report contains captured results for the listed questions. Q09 is intentionally excluded from the image sequence until its seller count is freshly verified.
+- Q09 is intentionally excluded until a new result is captured from MySQL Workbench after the full import has been reconciled.

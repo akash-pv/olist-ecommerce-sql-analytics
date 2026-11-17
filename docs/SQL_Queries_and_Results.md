@@ -269,9 +269,31 @@ HAVING SUM(oi.price) > 10000
 ORDER BY total_revenue DESC;
 ```
 
-**Execution screenshot:** Not included in this gallery. Capture a fresh result directly from MySQL Workbench before adding Q09 evidence.
+**Count-validation query**
 
-> The SQL is included, but the screenshot is intentionally omitted because the earlier captured seller output and the later count check did not provide matching evidence. Re-run this query in MySQL Workbench and add its genuine output screenshot when verified.
+```sql
+SELECT COUNT(*) AS qualifying_seller_groups
+FROM (
+    SELECT
+        s.seller_id,
+        s.seller_city,
+        SUM(oi.price) AS total_revenue
+    FROM sellers s
+    JOIN order_items oi
+        ON s.seller_id = oi.seller_id
+    JOIN orders o
+        ON oi.order_id = o.order_id
+    WHERE o.order_status = 'delivered'
+    GROUP BY s.seller_id, s.seller_city
+    HAVING SUM(oi.price) > 10000
+) AS qualifying_sellers;
+```
+
+**Verified result from the complete supplied CSV extracts:** 282 seller groups. This result uses the same seller_id + seller_city grouping as the query above.
+
+**Execution screenshot:** Not included. Capture a fresh MySQL Workbench result after rerunning the query on the reconciled database.
+
+> The earlier report showed 34 sellers, which did not match the complete source data. The exact cause of that earlier difference has not been established. It may reflect a different import state or query execution state, so the earlier result image has been removed rather than presented as current evidence.
 
 ## Q10 – Average order value by customer city
 
@@ -748,8 +770,8 @@ WHERE order_status = 'delivered'
 - [Intermediate SQL queries](../queries/02_intermediate_queries.sql)
 - [Advanced SQL queries](../queries/03_advanced_queries.sql)
 - [Business analysis queries](../queries/04_business_analysis_queries.sql)
-- [Database constraints](../queries/05_database_constraints.sql)
-- [Data-quality validation](../queries/06_data_quality_validation.sql)
+- [Database constraints](../queries/06_database_constraints.sql)
+- [Data-quality validation](../queries/05_data_quality_validation.sql)
 - [Screenshot-only gallery](../screenshots/query_results/README.md)
 - [Main project README](../README.md)
 

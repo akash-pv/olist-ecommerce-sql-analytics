@@ -1,9 +1,11 @@
 
 -- ============================================================
 -- OLIST E-COMMERCE SQL ANALYTICS
--- File: 05_database_constraints.sql
+-- File: 06_database_constraints.sql
 -- Database: olist_ecommerce
 -- Purpose: Define Primary Keys and Foreign Keys
+-- Run ONLY after 05_data_quality_validation.sql has been reviewed.
+-- One-time schema change: do not rerun on an already constrained database.
 -- MySQL 8.0
 -- ============================================================
 
@@ -82,7 +84,9 @@ ADD PRIMARY KEY (product_category_name);
 -- products.product_category_name and
 -- category_translation.product_category_name
 -- have a logical relationship, but no FK constraint.
--- 13 product records have unmatched categories.
+-- Category-mapping exceptions: 610 product rows have empty categories and
+-- 13 product rows have two non-empty categories without translations.
+-- Do not add an FK for this logical mapping until exceptions are addressed.
 
 -- FINAL VERIFICATION
 SELECT

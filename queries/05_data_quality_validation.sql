@@ -4,7 +4,19 @@
 -- DATA QUALITY & VALIDATION
 -- Database: olist_ecommerce
 --
+-- RECOMMENDED CLEAN-REBUILD ORDER:
+-- 1. Create all eight tables without PK/FK constraints.
+-- 2. Load the source CSV files with LOAD DATA LOCAL INFILE.
+-- 3. Run this script and review every validation result.
+-- 4. Apply 06_database_constraints.sql only after validation.
+--
+-- EXECUTION-HISTORY NOTE:
+-- In the initial project run, constraints were added before some validation
+-- queries were executed. The zero-result NULL/duplicate/orphan checks therefore
+-- describe the constrained database state, not a proven pre-constraint state.
+--
 -- Validation areas:
+-- 0. Source-to-table row-count reconciliation
 -- 1. NULL checks
 -- 2. Duplicate checks
 -- 3. Orphan record checks
@@ -12,6 +24,46 @@
 -- =========================================================
 
 USE olist_ecommerce;
+
+
+-- =========================================================
+-- 0. SOURCE-TO-TABLE ROW-COUNT RECONCILIATION
+-- Expected counts from the supplied Olist CSV extracts.
+-- Run after loading and before applying constraints.
+-- =========================================================
+
+SELECT 'customers' AS table_name, COUNT(*) AS actual_rows,
+       99441 AS expected_rows,
+       CASE WHEN COUNT(*) = 99441 THEN 'MATCH' ELSE 'MISMATCH' END AS status
+FROM customers
+UNION ALL
+SELECT 'orders', COUNT(*), 99441,
+       CASE WHEN COUNT(*) = 99441 THEN 'MATCH' ELSE 'MISMATCH' END
+FROM orders
+UNION ALL
+SELECT 'order_items', COUNT(*), 112650,
+       CASE WHEN COUNT(*) = 112650 THEN 'MATCH' ELSE 'MISMATCH' END
+FROM order_items
+UNION ALL
+SELECT 'payments', COUNT(*), 103886,
+       CASE WHEN COUNT(*) = 103886 THEN 'MATCH' ELSE 'MISMATCH' END
+FROM payments
+UNION ALL
+SELECT 'products', COUNT(*), 32951,
+       CASE WHEN COUNT(*) = 32951 THEN 'MATCH' ELSE 'MISMATCH' END
+FROM products
+UNION ALL
+SELECT 'sellers', COUNT(*), 3095,
+       CASE WHEN COUNT(*) = 3095 THEN 'MATCH' ELSE 'MISMATCH' END
+FROM sellers
+UNION ALL
+SELECT 'reviews', COUNT(*), 99224,
+       CASE WHEN COUNT(*) = 99224 THEN 'MATCH' ELSE 'MISMATCH' END
+FROM reviews
+UNION ALL
+SELECT 'category_translation', COUNT(*), 71,
+       CASE WHEN COUNT(*) = 71 THEN 'MATCH' ELSE 'MISMATCH' END
+FROM category_translation;
 
 
 -- =========================================================

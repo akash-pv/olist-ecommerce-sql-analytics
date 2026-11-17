@@ -77,6 +77,27 @@ HAVING SUM(oi.price) > 10000
 ORDER BY total_revenue DESC;
 
 
+-- Q09 count validation:
+-- Same joins, filter, grouping columns and HAVING logic as the seller-level query.
+-- Expected count after full source-to-table reconciliation: 282 seller groups.
+SELECT
+    COUNT(*) AS qualifying_seller_groups
+FROM (
+    SELECT
+        s.seller_id,
+        s.seller_city,
+        SUM(oi.price) AS total_revenue
+    FROM sellers s
+    JOIN order_items oi
+        ON s.seller_id = oi.seller_id
+    JOIN orders o
+        ON oi.order_id = o.order_id
+    WHERE o.order_status = 'delivered'
+    GROUP BY s.seller_id, s.seller_city
+    HAVING SUM(oi.price) > 10000
+) AS qualifying_sellers;
+
+
 -- Q10: Average order value by customer city (cities with 50+ delivered orders).
 -- AOV here is based on item price only; freight is excluded.
 -- First aggregate to one row per order, then calculate the city average.
